@@ -1,0 +1,19 @@
+@import url(https://fonts.googleapis.com/css?family=Didact+Gothic|Comfortaa:400,700&subset=latin,cyrillic);
+*, *:before, *:after{box-sizing:border-box}
+
+#header-title {
+    font-family: 'Comfortaa', cursive;
+    font-size: 50px;
+    font-weight: 400;
+    /* margin-bottom: 16px; */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #333333;
+    text-align: center;
+}
+
+header {
+    background-color: rgb(230, 177, 177);
+    padding: 15px;
+    margin: 0px;
+}

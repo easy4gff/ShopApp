@@ -1,0 +1,56 @@
+/* You can add global styles to this file, and also import other style files */
+@import '../node_modules/primeng/resources/themes/omega/theme.css';
+@import '../node_modules/primeng/resources/primeng.min.css';
+
+@media screen and (min-width: 1000px) {  
+  .center-grid {
+    width: 1000px;
+    margin: 0 auto;
+  }
+
+  /*.app-addproduct-div {
+    width: 700px;
+    margin: 0 auto;
+  }
+
+  .inputs-div {
+    width: 400px;
+    margin: 0 auto;
+  }*/
+}
+
+@media screen and (min-width: 700px) {  
+  .app-addproduct-div {
+    width: 700px;
+    margin: 0 auto;
+  }
+
+  .inputs-div {
+    width: 400px;
+    margin: 0 auto;
+  }
+}
+
+/* #add-product-btn-div {
+    margin: 5px 0px 0px 0px;
+    padding: 0px;
+} */
+
+/* .ui-datalist-data {
+    margin: 0px;
+} */
+
+.inputs-div div {
+    margin-bottom: 5px;
+}
+
+/* div {
+  border: 2px solid black;
+  margin: 2px;
+} */
+
+body {
+  /* background-color: rgb(226, 226, 226); */
+  padding: 0px;
+  margin: 0px;  
+}

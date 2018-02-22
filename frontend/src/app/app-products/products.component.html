@@ -1,0 +1,21 @@
+<p-dataList
+  [value]="products" 
+  paginator="true"
+  rows="5"
+>
+  <p-header class="data-list-header">Available products</p-header>
+    <ng-template let-product pTemplate="item">
+      <app-product  
+        [product]="product"
+        [isSelected]="!!selectedProduct && product.id === selectedProduct.id"
+        (delete)="confirmDeleteProduct($event)"
+        (edit)="editProduct($event)"
+        (fullInfoStateChanged)="changeSelectedId($event)"
+      >
+      </app-product>
+    </ng-template>
+</p-dataList>
+
+<p-confirmDialog></p-confirmDialog>
+
+<p-growl [(value)]="notifications"></p-growl>

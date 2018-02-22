@@ -1,0 +1,18 @@
+
+.fullwidht-button {
+    width: 100%;
+}
+
+.product-item {
+    border-bottom: 1px solid rgb(209, 202, 202);
+}
+
+.product-item:hover {
+    background-color: #e9e6e6;
+    border: 1px solid rgb(209, 202, 202);
+    /* border-radius: 5px; */
+}
+
+.form-input {
+    opacity: 1 !important;
+}
