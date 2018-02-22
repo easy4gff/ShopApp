@@ -16,7 +16,7 @@ import {
   Validators
 } from '@angular/forms';
 
-import { Product } from '../product/product.model';
+import { Product } from '../../models/product/product.model';
 import { CommonModule } from '@angular/common';
 
 import { TableModule, EditableColumn, CellEditor } from 'primeng/table';
@@ -46,7 +46,90 @@ function priceValidator(control: FormControl): { [s: string]: boolean } {
 
 @Component({
   selector: 'app-product',
-  templateUrl: './app-product.component.html',
+  template:
+  `
+  <div class="ui-g-12 product-item">
+    <div class="ui-g-4 ui-md-4 ui-sm-12" style="text-align:center">
+        <img width="230px" height="200px" [src]="'data:image/jpg;base64,'+product.image">
+    </div>
+
+    <div class="ui-g-8 ui-md-8 ui-sm-12">
+      <div class="ui-grid-row">
+            <div class="ui-g-3 ui-md-3 ui-sm-6">Title:</div>
+            <!-- <div class="ui-g-6 ui-md-6 ui-sm-6">{{ product.title }}</div> -->
+            <div class="ui-g-6 ui-md-6 ui-sm-6">
+                <input
+                  class="ui-g-12 form-input"
+                  id="title-input"
+                  type="text"
+                  value="{{product.title}}"
+                  pInputText
+                  [formControl]="form.controls['title']"
+                />
+            </div>
+        </div>
+
+        <div class="ui-grid-row">
+            <div class="ui-g-3 ui-md-3 ui-sm-6">Price:</div>
+            <div class="ui-g-6 ui-md-6 ui-sm-6">
+                <input
+                  pInputText
+                  class="ui-g-12 form-input"
+                  id="price-input"
+                  type="text"
+                  value="{{product.price}}"
+                  [formControl]="form.controls['price']"/>
+            </div>
+        </div>
+
+
+        <div class="ui-grid-row" *ngIf="isSelected">
+            <div class="ui-g-3 ui-md-3 ui-sm-12">Description:</div>
+            <div class="ui-g-9 ui-md-9 ui-sm-12">
+                <textarea
+                    pInputTextarea
+                    class="ui-g-12 form-input"
+                    id="description-input"
+                    value="{{product.description}}"
+                    [rows]="5" [cols]="30"
+                    autoResize="autoresize"
+                    [formControl]="form.controls['description']"
+                >
+                </textarea>
+            </div>
+        </div>
+
+        <div class="ui-grid-row" *ngIf="isSelected">
+            <app-product-edit-handler
+                [editModeEnabled]="editMode"
+                (editModeChanged)="toggleEditMode()"
+            >
+            </app-product-edit-handler>
+        </div>
+
+
+        <div class="ui-grid-row">
+            <app-product-fullinfo-toggle-button
+                [fullInfoModeEnabled]="isSelected"
+                (fullInfoModeChanged)="toggleFullInfo()"
+            >
+            </app-product-fullinfo-toggle-button>
+        </div>
+
+        <div class="ui-grid-row">
+            <div class="ui-g-12">
+                <button
+                  pButton
+                  type="button"
+                  (click)="emitDeleteEvent()"
+                  label="Delete product"
+                  class="ui-button-danger fullwidht-button"
+                ></button>
+            </div>
+        </div>
+    </div>
+  </div>
+  `,
   styleUrls: ['./app-product.component.css'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.Default

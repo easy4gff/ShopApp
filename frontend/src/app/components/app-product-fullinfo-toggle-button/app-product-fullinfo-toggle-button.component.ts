@@ -12,7 +12,18 @@ const LABEL_TEXT_HIDE_FULL_INFO = 'Hide full info';
 
 @Component({
   selector: 'app-product-fullinfo-toggle-button',
-  templateUrl: './app-product-fullinfo-toggle-button.component.html',
+  template:
+  `
+  <div class="ui-g-12">
+    <button
+      pButton
+      type="button"
+      (click)="handleButtonClick()"
+      label="{{labelTextMap.get(fullInfoModeEnabled)}}"
+      class="ui-button-info fullwidht-button">
+    </button>
+  </div>
+  `,
   styles: []
 })
 export class AppProductFullinfoToggleButtonComponent implements OnInit {

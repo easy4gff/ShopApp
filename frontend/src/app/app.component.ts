@@ -3,19 +3,34 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 
-import { AppHttpServiceComponent } from './app-http-service/app-http-service.component';
+import { AppHttpServiceComponent } from './services/app-http-service/app-http-service.component';
 
-import { Product } from './product/product.model';
-import {Header} from 'primeng/primeng';
-import {Footer} from 'primeng/primeng';
+import { Product } from './models/product/product.model';
+import { Header } from 'primeng/primeng';
+import { Footer } from 'primeng/primeng';
 
 import { Observable } from 'rxjs/Observable';
-// import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subject } from 'rxjs/Subject';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
+  template:
+  `
+  <header>
+    <h1 id="header-title">Some header for shop!</h1>
+  </header>
+
+  <div class="app-root center-grid">
+    <div class="app-addproduct-div">
+      <app-addproduct (add)="addProduct($event)"></app-addproduct>
+    </div>
+
+    <app-products
+      [refreshRequester]="refresher"
+    ></app-products>
+  </div>
+
+  `,
   styleUrls: ['./app.component.css'],
   encapsulation: ViewEncapsulation.None
 })
@@ -23,8 +38,7 @@ export class AppComponent {
 
   private refresher: Subject<null> = new Subject<null>();
 
-  constructor(private productsService: AppHttpServiceComponent) {
-  }
+  constructor(private productsService: AppHttpServiceComponent) {}
 
   // Загрузить продукт на сервер
   addProduct(p: Product): void {

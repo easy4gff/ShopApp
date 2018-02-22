@@ -9,8 +9,8 @@ import {
 } from '@angular/core';
 import { HttpClient} from '@angular/common/http';
 
-import { Product } from '../product/product.model';
-import { AppHttpServiceComponent } from '../app-http-service/app-http-service.component';
+import { Product } from '../../models/product/product.model';
+import { AppHttpServiceComponent } from '../../services/app-http-service/app-http-service.component';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -22,7 +22,30 @@ import { MessageService } from 'primeng/components/common/messageservice';
 
 @Component({
   selector: 'app-products',
-  templateUrl: './products.component.html',
+  template:
+  `
+  <p-dataList
+    [value]="products"
+    paginator="true"
+    rows="5"
+  >
+    <p-header class="data-list-header">Available products</p-header>
+      <ng-template let-product pTemplate="item">
+        <app-product
+          [product]="product"
+          [isSelected]="!!selectedProduct && product.id === selectedProduct.id"
+          (delete)="confirmDeleteProduct($event)"
+          (edit)="editProduct($event)"
+          (fullInfoStateChanged)="changeSelectedId($event)"
+        >
+        </app-product>
+      </ng-template>
+  </p-dataList>
+
+  <p-confirmDialog></p-confirmDialog>
+
+  <p-growl [(value)]="notifications"></p-growl>
+  `,
   styleUrls: ['./products.component.css'] ,
   encapsulation: ViewEncapsulation.None
 })

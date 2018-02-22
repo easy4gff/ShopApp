@@ -12,7 +12,18 @@ const LABEL_TEXT_SAVE_CHANGES = 'Save changes';
 
 @Component({
   selector: 'app-product-edit-handler',
-  templateUrl: './app-product-edit-handler.component.html',
+  template:
+  `
+  <div class="ui-g-12">
+    <button
+        pButton
+        type="button"
+        (click)="handleButtonClick()"
+        label="{{labelTextMap.get(this.editModeEnabled)}}"
+        class="ui-button-success fullwidht-button">
+    </button>
+  </div>
+  `,
   styleUrls: ['./app-product-edit-handler.component.css']
 })
 export class AppProductEditHandlerComponent implements OnInit {

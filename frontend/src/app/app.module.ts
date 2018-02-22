@@ -18,17 +18,21 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import { ProductsComponent } from './app-products/products.component';
+import { ProductsComponent } from './components/app-products/products.component';
 import { appStoreProviders } from './app.store';
-import { ProductsState, ProductsReducer } from './product/products.reducer';
-import { AppProductComponent } from './app-product/app-product.component';
-import { AppAddproductComponent } from './app-addproduct/app-addproduct.component';
+import { ProductsState, ProductsReducer } from './models/product/products.reducer';
+import { AppProductComponent } from './components/app-product/app-product.component';
+import { AppAddproductComponent } from './components/app-addproduct/app-addproduct.component';
+import { AppProductEditHandlerComponent } from './components/app-product-edit-handler/app-product-edit-handler.component';
+import {
+  AppProductFullinfoToggleButtonComponent
+} from './components/app-product-fullinfo-toggle-button/app-product-fullinfo-toggle-button.component';
+
 import { serverUrlProviders } from './app.props';
-import { AppHttpServiceComponent } from './app-http-service/app-http-service.component';
+import { AppHttpServiceComponent } from './services/app-http-service/app-http-service.component';
 
 import { FileValidator } from './fileValidator';
-import { AppProductEditHandlerComponent } from './app-product-edit-handler/app-product-edit-handler.component';
-import { AppProductFullinfoToggleButtonComponent } from './app-product-fullinfo-toggle-button/app-product-fullinfo-toggle-button.component';
+
 
 @NgModule({
   declarations: [
