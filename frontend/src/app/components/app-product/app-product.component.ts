@@ -22,19 +22,29 @@ import { CommonModule } from '@angular/common';
 import { TableModule, EditableColumn, CellEditor } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 
-// Класс для свойства объекта
-class Property {
-  // Название свойства
-  title: string;
-  // Значение свойства
-  value: string;
+import { imageToDataUri } from '../../utils/base64-image-utils';
 
-  // Конструктор
-  constructor(title: string, value: string) {
-    this.title = title;
-    this.value = value;
-  }
-}
+// // Класс для свойства объекта
+// class Property {
+//   // Название свойства
+//   title: string;
+//   // Значение свойства
+//   value: string;
+
+//   // Конструктор
+//   constructor(title: string, value: string) {
+//     this.title = title;
+//     this.value = value;
+//   }
+// }
+
+const INPUT_OPACITY_BLOCKED: number = 0.7;
+const INPUT_OPACITY_ENABLED: number = 1;
+
+const IMAGE_ICON_WIDTH:  number = 230;
+const IMAGE_ICON_HEIGHT: number = 200;
+const IMAGE_FULL_WIDTH:  number = 500;
+const IMAGE_FULL_HEIGHT: number = 400;
 
 // Проверка корректности стоимости товара
 function priceValidator(control: FormControl): { [s: string]: boolean } {
@@ -50,10 +60,11 @@ function priceValidator(control: FormControl): { [s: string]: boolean } {
   `
   <div class="ui-g-12 product-item">
     <div class="ui-g-4 ui-md-4 ui-sm-12" style="text-align:center">
-        <img width="230px" height="200px" [src]="'data:image/jpg;base64,'+product.image">
+      <p-lightbox [images]="image" id="lightbox"></p-lightbox>
+      <!-- <img width="230px" height="200px" [src]="'data:image/jpg;base64,'+product.image"> -->
     </div>
 
-    <div class="ui-g-8 ui-md-8 ui-sm-12">
+    <div class="ui-g-8 ui-md-8 ui-sm-12 inputs-container non-editable">
       <div class="ui-grid-row">
             <div class="ui-g-3 ui-md-3 ui-sm-6">Title:</div>
             <!-- <div class="ui-g-6 ui-md-6 ui-sm-6">{{ product.title }}</div> -->
@@ -65,6 +76,7 @@ function priceValidator(control: FormControl): { [s: string]: boolean } {
                   value="{{product.title}}"
                   pInputText
                   [formControl]="form.controls['title']"
+                  [style.opacity]="inputsOpacity"
                 />
             </div>
         </div>
@@ -78,7 +90,9 @@ function priceValidator(control: FormControl): { [s: string]: boolean } {
                   id="price-input"
                   type="text"
                   value="{{product.price}}"
-                  [formControl]="form.controls['price']"/>
+                  [formControl]="form.controls['price']"
+                  [style.opacity]="inputsOpacity"
+                />
             </div>
         </div>
 
@@ -94,40 +108,40 @@ function priceValidator(control: FormControl): { [s: string]: boolean } {
                     [rows]="5" [cols]="30"
                     autoResize="autoresize"
                     [formControl]="form.controls['description']"
+                    [style.opacity]="inputsOpacity"
                 >
                 </textarea>
             </div>
         </div>
 
-        <div class="ui-grid-row" *ngIf="isSelected">
-            <app-product-edit-handler
-                [editModeEnabled]="editMode"
-                (editModeChanged)="toggleEditMode()"
-            >
-            </app-product-edit-handler>
-        </div>
-
-
-        <div class="ui-grid-row">
-            <app-product-fullinfo-toggle-button
-                [fullInfoModeEnabled]="isSelected"
-                (fullInfoModeChanged)="toggleFullInfo()"
-            >
-            </app-product-fullinfo-toggle-button>
-        </div>
-
-        <div class="ui-grid-row">
-            <div class="ui-g-12">
-                <button
-                  pButton
-                  type="button"
-                  (click)="emitDeleteEvent()"
-                  label="Delete product"
-                  class="ui-button-danger fullwidht-button"
-                ></button>
-            </div>
-        </div>
+        <div class="ui-g-12" style="padding: 0px;" *ngIf="isSelected">
+          <app-product-edit-handler
+              [editModeEnabled]="editMode"
+              [formValid]="form.valid"
+              (editModeChanged)="toggleEditMode()"
+          >
+          </app-product-edit-handler>
+      </div>
     </div>
+    <ul class="buttons-list ui-g-12">
+      <div class="ui-g-4" style="padding: 0px;">
+          <app-product-fullinfo-toggle-button
+              [fullInfoModeEnabled]="isSelected"
+              (fullInfoModeChanged)="toggleFullInfo()"
+          >
+          </app-product-fullinfo-toggle-button>
+      </div>
+
+      <div class="ui-g-4">
+          <button
+            pButton
+            type="button"
+            (click)="emitDeleteEvent()"
+            label="Delete product"
+            class="ui-button-danger fullwidht-button"
+          ></button>
+      </div>
+  </ul>
   </div>
   `,
   styleUrls: ['./app-product.component.css'],
@@ -158,8 +172,10 @@ export class AppProductComponent implements OnInit, OnChanges {
 
   // Форма
   private form: FormGroup;
+  private inputsOpacity: number = INPUT_OPACITY_BLOCKED;
 
   private text: string;
+  private image: any[] = [];
 
   // Конструктор компонента
   constructor(fb: FormBuilder) {
@@ -188,11 +204,19 @@ export class AppProductComponent implements OnInit, OnChanges {
 
     this.form = new FormGroup({
       title: new FormControl({ value: this.product.title, disabled: true }, Validators.required),
-      price: new FormControl({ value: this.product.price, disabled: true }, Validators.required),
-      description: new FormControl({ value: this.product.description, disabled: true }, Validators.required),
+      price: new FormControl({ value: this.product.price, disabled: true }, Validators.compose([Validators.required, priceValidator])),
+      description: new FormControl({ value: this.product.description, disabled: true })
     });
 
-    // console.log(this.product.description);
+    let img: HTMLImageElement = new Image();
+    img.src = `data:image/jpg;base64,${this.product.image}`;
+    this.image.push({
+      source: imageToDataUri(img, IMAGE_FULL_WIDTH, IMAGE_FULL_HEIGHT),
+      thumbnail: imageToDataUri(img, IMAGE_ICON_WIDTH, IMAGE_ICON_HEIGHT),
+      title: this.product.title,
+      style: 'width: 300px'
+    });
+    console.log(this.form.valid);
   }
 
   ngOnChanges(): void {}
@@ -213,12 +237,14 @@ export class AppProductComponent implements OnInit, OnChanges {
     this.form.controls['price'].disable();
     this.form.controls['title'].disable();
     this.form.controls['description'].disable();
+    this.inputsOpacity = INPUT_OPACITY_BLOCKED;
   }
 
   unlockControls(): void {
     this.form.controls['price'].enable();
     this.form.controls['title'].enable();
     this.form.controls['description'].enable();
+    this.inputsOpacity = INPUT_OPACITY_ENABLED;
   }
 
   toggleEditMode(): void {

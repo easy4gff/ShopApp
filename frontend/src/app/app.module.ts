@@ -13,6 +13,8 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { GrowlModule } from 'primeng/growl';
+import { DialogModule } from 'primeng/dialog';
+import { LightboxModule } from 'primeng/lightbox';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
@@ -60,7 +62,9 @@ import { FileValidator } from './fileValidator';
     InputTextModule,
     InputTextareaModule,
     ConfirmDialogModule,
-    GrowlModule
+    GrowlModule,
+    DialogModule,
+    LightboxModule
   ],
   providers: [
     appStoreProviders,

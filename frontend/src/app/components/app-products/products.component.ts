@@ -42,12 +42,11 @@ import { MessageService } from 'primeng/components/common/messageservice';
       </ng-template>
   </p-dataList>
 
-  <p-confirmDialog></p-confirmDialog>
+  <p-confirmDialog header="Confirmation"></p-confirmDialog>
 
   <p-growl [(value)]="notifications"></p-growl>
   `,
-  styleUrls: ['./products.component.css'] ,
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./products.component.css']
 })
 export class ProductsComponent implements OnInit {
 
@@ -91,7 +90,8 @@ export class ProductsComponent implements OnInit {
   // refreshProducts(): void {
   //   this.productsService.refreshProducts().toPromise()
   //     .then((data: Object[]) => {
-  //       this.products = data.map((obj: Product) => new Product(obj.id, obj.price, obj.title, obj.image, null, obj.description)).reverse();
+  //       this.products =
+  //          data.map((obj: Product) => new Product(obj.id, obj.price, obj.title, obj.image, null, obj.description)).reverse();
   //       setTimeout(() => {
   //         console.log('DATA LOADED');
   //       }, 3000);
@@ -130,12 +130,12 @@ export class ProductsComponent implements OnInit {
 
   confirmDeleteProduct(product: Product) {
     this.confirmationService.confirm({
-        message: 'Are you sure that you want to delete this product?',
-        accept: () => {
-            this.deleteProduct(product);
-            this.messageService.add({severity: 'error', summary: 'Delete', detail: 'This product was succesfully deleted!'});
-        }
-    });
+      message: 'Are you sure that you want to delete this product?',
+      accept: () => {
+        this.deleteProduct(product);
+        this.messageService.add({ severity: 'error', summary: 'Delete', detail: 'This product was succesfully deleted from the server!' });
+      }
+  });
 }
 
   // Удалить продукт с сервера

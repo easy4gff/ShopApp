@@ -20,15 +20,16 @@ import { Subject } from 'rxjs/Subject';
     <h1 id="header-title">Some header for shop!</h1>
   </header>
 
-  <div class="app-root center-grid">
-    <div class="app-addproduct-div">
-      <app-addproduct (add)="addProduct($event)"></app-addproduct>
+  <main>
+    <div class="app-root center-grid">
+      <div class="app-addproduct-div">
+        <app-addproduct (add)="addProduct($event)"></app-addproduct>
+      </div>
+      <app-products
+        [refreshRequester]="refresher"
+      ></app-products>
     </div>
-
-    <app-products
-      [refreshRequester]="refresher"
-    ></app-products>
-  </div>
+  </main>
 
   `,
   styleUrls: ['./app.component.css'],

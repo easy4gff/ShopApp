@@ -21,14 +21,14 @@
 
 @media screen and (min-width: 700px) {  
   .app-addproduct-div {
-    width: 700px;
-    margin: 0 auto;
-  }
-
-  .inputs-div {
     width: 400px;
     margin: 0 auto;
   }
+
+  /* .inputs-div {
+    width: 400px;
+    margin: 0 auto;
+  } */
 }
 
 /* #add-product-btn-div {

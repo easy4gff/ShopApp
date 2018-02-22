@@ -16,11 +16,13 @@ const LABEL_TEXT_SAVE_CHANGES = 'Save changes';
   `
   <div class="ui-g-12">
     <button
-        pButton
-        type="button"
-        (click)="handleButtonClick()"
-        label="{{labelTextMap.get(this.editModeEnabled)}}"
-        class="ui-button-success fullwidht-button">
+      pButton
+      type="button"
+      (click)="handleButtonClick()"
+      label="{{labelTextMap.get(this.editModeEnabled)}}"
+      class="ui-button-success fullwidht-button"
+      [disabled]="editModeEnabled && !formValid"
+    >
     </button>
   </div>
   `,
@@ -29,6 +31,8 @@ const LABEL_TEXT_SAVE_CHANGES = 'Save changes';
 export class AppProductEditHandlerComponent implements OnInit {
   // Состояние режима редактирования
   @Input()  editModeEnabled: boolean;
+  // Состояние допустимости значений в форме
+  @Input() formValid: boolean;
   // Эвент для редактирования
   @Output() editModeChanged: EventEmitter<null> = new EventEmitter<null>();
 
