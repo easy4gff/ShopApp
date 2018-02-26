@@ -24,7 +24,10 @@ import { CommonModule } from '@angular/common';
 import { TableModule, EditableColumn, CellEditor } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 
-import { imageToDataUri } from '../../utils/base64-image-utils';
+import {
+  imageToDataUri,
+  loadResizedImageAndIconForLightbox
+} from '../../utils/base64-image-utils';
 
 // // Класс для свойства объекта
 // class Property {
@@ -195,20 +198,16 @@ export class AppProductComponent implements OnInit, OnChanges, AfterViewInit {
       description: new FormControl({ value: this.product.description, disabled: true })
     });
 
-    let img: HTMLImageElement = new Image();
-    img.src = `data:image/jpg;base64,${this.product.image}`;
-
-    img.onload = () => {
-      const sourceImage: string = imageToDataUri(img, IMAGE_FULL_HEIGHT, IMAGE_FULL_WIDTH);
-      const thumbnail: string = imageToDataUri(img, IMAGE_ICON_HEIGHT, IMAGE_ICON_WIDTH, true);
-
-      this.image = [{
-        source: sourceImage,
-        thumbnail: thumbnail,
-        title: this.product.title,
-        style: 'width: 300px'
-      }];
-    };
+    loadResizedImageAndIconForLightbox(
+      this.image,
+      this.product.title,
+      this.product.image,
+      IMAGE_FULL_HEIGHT,
+      IMAGE_FULL_WIDTH,
+      IMAGE_ICON_HEIGHT,
+      IMAGE_ICON_WIDTH
+    );
+    console.log(this.image);
 
     console.log('ngOnInit completed');
   }

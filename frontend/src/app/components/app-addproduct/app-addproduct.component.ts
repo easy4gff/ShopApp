@@ -15,12 +15,21 @@ import {
 
 import { Product } from '../../models/product/product.model';
 import { FileValidator } from '../../fileValidator';
+import {
+  imageToDataUri,
+  loadResizedImageAndIconForLightbox
+} from '../../utils/base64-image-utils';
 
 import { MessageService } from 'primeng/components/common/messageservice';
 import { SelectItem } from 'primeng/components/common/api';
 import { Message } from 'primeng/components/common/api';
 import { Header } from 'primeng/primeng';
 import { Footer } from 'primeng/primeng';
+
+const IMAGE_ICON_WIDTH:  number = 230;
+const IMAGE_ICON_HEIGHT: number = 200;
+const IMAGE_FULL_WIDTH:  number = 500;
+const IMAGE_FULL_HEIGHT: number = 400;
 
 // Проверка корректности стоимости товара
 function priceValidator(control: FormControl): { [s: string]: boolean } {
@@ -34,47 +43,47 @@ function priceValidator(control: FormControl): { [s: string]: boolean } {
   selector: 'app-addproduct',
   template: `
   <!-- Add product dialog -->
+  <!-- TODO: fix modal dialog blur-->
   <p-dialog
     header="New product information"
     [(visible)]="formVisible"
     [draggable]="false"
-    [resizable]="false"
     [modal]="true"
-    [width]="640"
+    [width]="600"
   >
     <div class="ui-g">
       <div class="ui-g-12">
         <form [formGroup]="form" *ngIf="formVisible">
           <!-- <p-panel header="New product"> -->
               <div class="inputs-div">
-                <div class="ui-grid-row input-item">
-                  <div class="ui-grid-col-3">
-                  <label for="titleInput">Title</label>
+                <div class="ui-g-12 input-item">
+                  <div class="ui-grid-col-4 label-container">
+                    <label for="titleInput">Title</label>
                   </div>
-                  <div class="ui-grid-col-9">
+                  <div class="ui-grid-col-7">
                     <input pInputText type="text" id="titleInput" placeholder="title" [formControl]="form.controls['title']">
                   </div>
                 </div>
 
-                <div class="ui-grid-row input-item">
-                  <div class="ui-grid-col-3">
+                <div class="ui-g-12 input-item">
+                  <div class="ui-grid-col-4 label-container">
                     <label for="priceInput">Price</label>
                   </div>
-                  <div  class="ui-grid-col-9">
+                  <div  class="ui-grid-col-8">
                     <input pInputText type="text" id="priceInput" placeholder="price" [formControl]="form.controls['price']">
                   </div>
                 </div>
 
-                <div class="ui-grid-row input-item">
-                  <div class="ui-grid-col-3">
+                <div class="ui-g-12 input-item">
+                  <div class="ui-grid-col-4 label-container">
                     <label for="priceInput">Price</label>
                   </div>
-                  <div  class="ui-grid-col-9">
+                  <div  class="ui-grid-col-8">
                     <textarea
                       pInputTextarea
                       placeholder="description"
                       id="descriptionInput"
-                      [rows]="5" [cols]="40"
+                      [rows]="5" [cols]="25"
                       autoResize="autoresize"
                       [formControl]="form.controls['description']"
                     >
@@ -82,16 +91,23 @@ function priceValidator(control: FormControl): { [s: string]: boolean } {
                   </div>
                 </div>
 
-                <div class="ui-grid-row input-item">
-                  <div class="ui-grid-col-3">
+                <div class="ui-g-12">
+                  <div class="ui-g-4 ui-g-offset-3">
+                    <p-lightbox [images]="images" id="lightbox-addproduct"></p-lightbox>
+                  </div>
+                </div>
+
+                <div class="ui-g-12 input-item">
+                  <div class="ui-grid-col-4 label-container">
                     <label for="imageSrcInput">Image</label>
                   </div>
-                  <div class="ui-grid-col-9">
+                  <div class="ui-grid-col-8">
                     <input
                       type="file"
                       name="imageFile"
                       id="imageSrcInput"
                       accept="image/jpeg,image/png"
+                      (change)="updateBase64Image($event)"
                       [formControl]="form.controls['image']"
                     />
                   </div>
@@ -102,7 +118,7 @@ function priceValidator(control: FormControl): { [s: string]: boolean } {
                 <p-message severity="error" text="Image is required" *ngIf="noImageWarning" class="centered-text ui-g-12"></p-message>
               </div>
 
-              <div class="ui-g">
+              <!-- <div class="ui-g-12"> -->
                 <!-- <p-footer class="ui-g-12" style="border: 1px solid black"> -->
                   <ul class="button-list ui-g-12">
                       <li class="ui-g-6">
@@ -126,7 +142,7 @@ function priceValidator(control: FormControl): { [s: string]: boolean } {
                       </li>
                   </ul>
                 <!-- </p-footer> -->
-              </div>
+              <!-- </div> -->
 
           <!-- </p-panel> -->
         </form>
@@ -174,6 +190,12 @@ function priceValidator(control: FormControl): { [s: string]: boolean } {
       margin: 10px;
       padding: 10px;
     }
+
+    .label-container {
+      text-align: right;
+      padding-right: 35px;
+      padding-top: 3px;
+    }
   `
   ]
 })
@@ -184,6 +206,8 @@ export class AppAddproductComponent implements OnInit {
 
   // Сообщения для оповещений
   private msgs: Message[] = [];
+
+  private images: any[] = [];
 
   // Форма
   private form: FormGroup;
@@ -206,6 +230,7 @@ export class AppAddproductComponent implements OnInit {
   }
 
   ngOnInit() {
+
   }
 
   // Показать/скрыть форму
@@ -214,6 +239,36 @@ export class AppAddproductComponent implements OnInit {
     // if (this.formVisible) {
     //   window.scrollTo(0, document.body.scrollHeight);
     // }
+  }
+
+  updateBase64Image(value: any): void {
+    // const file: File = (<HTMLInputElement>document.getElementById('imageSrcInput')).files[0];
+    // const reader: FileReader = new FileReader();
+    // reader.onload = (e: any): void => {
+    //   return reader.result.split(',')[1];
+    // };
+    if (this.imageAbscenceStatus()) {
+      return;
+    }
+
+    const file: File = (<HTMLInputElement>document.getElementById('imageSrcInput')).files[0];
+    const reader: FileReader = new FileReader();
+
+    reader.onload = (e: any): void => {
+      this.images = [];
+      const fileBase64: string = reader.result.split(',')[1];
+      loadResizedImageAndIconForLightbox(
+        this.images,
+        '',
+        fileBase64,
+        IMAGE_FULL_HEIGHT,
+        IMAGE_FULL_WIDTH,
+        IMAGE_ICON_HEIGHT,
+        IMAGE_ICON_WIDTH
+      );
+    };
+
+    reader.readAsDataURL(file);
   }
 
   // Добавить продукт на сервер
