@@ -2,11 +2,13 @@ import {
   Component,
   OnInit,
   OnChanges,
+  AfterViewInit,
   Input,
   Output,
   ViewEncapsulation,
   EventEmitter,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  ChangeDetectorRef
 } from '@angular/core';
 
 import {
@@ -148,7 +150,7 @@ function priceValidator(control: FormControl): { [s: string]: boolean } {
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.Default
 })
-export class AppProductComponent implements OnInit, OnChanges {
+export class AppProductComponent implements OnInit, OnChanges, AfterViewInit {
   // Продукт для отображения
   @Input() product: Product;
   // Флаг выбранности продукта
@@ -163,8 +165,8 @@ export class AppProductComponent implements OnInit, OnChanges {
   // private params: Array<any>;
 
   // Свойства продукта для отображения
-  private properties: Map<string, string> = new Map<string, string>();
-  private propKeys: String[];
+  // private properties: Map<string, string> = new Map<string, string>();
+  // private propKeys: String[];
   // private properties: Property[];
 
   // Режим редактирования
@@ -178,29 +180,14 @@ export class AppProductComponent implements OnInit, OnChanges {
   private image: any[] = [];
 
   // Конструктор компонента
-  constructor(fb: FormBuilder) {
+  constructor(fb: FormBuilder, private cdref: ChangeDetectorRef) {
     this.delete = new EventEmitter<Product>();
     this.edit = new EventEmitter<Product>();
     this.fullInfoStateChanged = new EventEmitter<number>();
   }
 
   ngOnInit() {
-    // this.params = [
-    //   { header: "Title", value: this.product.title },
-    //   { header: "Price", value: this.product.price }
-    // ];
-
-    // this.properties = [
-    //   new Property('Title', this.product.title),
-    //   new Property('Price', this.product.price.toString())
-    // ];
-
-    // console.log("!!!");
-    // this.properties.set('Title', this.product.title);
-    // this.properties.set('Price', this.product.price.toString());
-    // this.propKeys = Array.from(this.properties.keys());
     this.editMode = false;
-    // this.editMode = false;
 
     this.form = new FormGroup({
       title: new FormControl({ value: this.product.title, disabled: true }, Validators.required),
@@ -210,13 +197,24 @@ export class AppProductComponent implements OnInit, OnChanges {
 
     let img: HTMLImageElement = new Image();
     img.src = `data:image/jpg;base64,${this.product.image}`;
-    this.image.push({
-      source: imageToDataUri(img, IMAGE_FULL_WIDTH, IMAGE_FULL_HEIGHT),
-      thumbnail: imageToDataUri(img, IMAGE_ICON_WIDTH, IMAGE_ICON_HEIGHT),
-      title: this.product.title,
-      style: 'width: 300px'
-    });
-    console.log(this.form.valid);
+
+    img.onload = () => {
+      const sourceImage: string = imageToDataUri(img, IMAGE_FULL_WIDTH, IMAGE_FULL_HEIGHT);
+      const thumbnail: string = imageToDataUri(img, IMAGE_ICON_WIDTH, IMAGE_ICON_HEIGHT);
+
+      this.image = [{
+        source: sourceImage,
+        thumbnail: thumbnail,
+        title: this.product.title,
+        style: 'width: 300px'
+      }];
+    };
+
+    console.log('ngOnInit completed');
+  }
+
+  ngAfterViewInit(): void {
+    console.log('ngAfterViewInit');
   }
 
   ngOnChanges(): void {}

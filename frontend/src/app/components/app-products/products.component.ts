@@ -152,6 +152,7 @@ export class ProductsComponent implements OnInit {
   // Редактировать продукт
   editProduct(product: Product): void {
     // this.productsService.editProduct();
+    // this.messageService.add({ severity: 'success', summary: 'Edit', detail: 'This product\'s info was succesfully edited!' });
     this.addProduct(product);
     // this.productsService.addProduct(product);
   }
