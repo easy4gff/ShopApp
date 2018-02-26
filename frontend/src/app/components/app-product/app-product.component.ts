@@ -199,8 +199,8 @@ export class AppProductComponent implements OnInit, OnChanges, AfterViewInit {
     img.src = `data:image/jpg;base64,${this.product.image}`;
 
     img.onload = () => {
-      const sourceImage: string = imageToDataUri(img, IMAGE_FULL_WIDTH, IMAGE_FULL_HEIGHT);
-      const thumbnail: string = imageToDataUri(img, IMAGE_ICON_WIDTH, IMAGE_ICON_HEIGHT);
+      const sourceImage: string = imageToDataUri(img, IMAGE_FULL_HEIGHT, IMAGE_FULL_WIDTH);
+      const thumbnail: string = imageToDataUri(img, IMAGE_ICON_HEIGHT, IMAGE_ICON_WIDTH, true);
 
       this.image = [{
         source: sourceImage,
