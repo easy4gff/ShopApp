@@ -5,10 +5,12 @@ import {
   AfterViewInit,
   Input,
   Output,
+  ViewChild,
   ViewEncapsulation,
   EventEmitter,
   ChangeDetectionStrategy,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  ElementRef
 } from '@angular/core';
 
 import {
@@ -43,13 +45,18 @@ import {
 //   }
 // }
 
-const INPUT_OPACITY_BLOCKED: number = 0.7;
-const INPUT_OPACITY_ENABLED: number = 1;
+const INPUT_OPACITY_BLOCKED = 0.7;
+const INPUT_OPACITY_ENABLED = 1;
 
-const IMAGE_ICON_WIDTH:  number = 230;
-const IMAGE_ICON_HEIGHT: number = 200;
-const IMAGE_FULL_WIDTH:  number = 500;
-const IMAGE_FULL_HEIGHT: number = 400;
+const IMAGE_ICON_WIDTH  = 230;
+const IMAGE_ICON_HEIGHT = 200;
+const IMAGE_FULL_WIDTH  = 500;
+const IMAGE_FULL_HEIGHT = 400;
+
+const LOCKED_INPUTS_STYLE = {
+  border: '0px',
+  background: 'none'
+};
 
 // Проверка корректности стоимости товара
 function priceValidator(control: FormControl): { [s: string]: boolean } {
@@ -82,6 +89,7 @@ function priceValidator(control: FormControl): { [s: string]: boolean } {
                   pInputText
                   [formControl]="form.controls['title']"
                   [style.opacity]="inputsOpacity"
+                  [ngStyle]="inputsClassStyle"
                 />
             </div>
         </div>
@@ -97,6 +105,7 @@ function priceValidator(control: FormControl): { [s: string]: boolean } {
                   value="{{product.price}}"
                   [formControl]="form.controls['price']"
                   [style.opacity]="inputsOpacity"
+                  [ngStyle]="inputsClassStyle"
                 />
             </div>
         </div>
@@ -106,14 +115,17 @@ function priceValidator(control: FormControl): { [s: string]: boolean } {
             <div class="ui-g-3 ui-md-3 ui-sm-12">Description:</div>
             <div class="ui-g-9 ui-md-9 ui-sm-12">
                 <textarea
+                    #textArea
                     pInputTextarea
                     class="ui-g-12 form-input"
                     id="description-input"
                     value="{{product.description}}"
-                    [rows]="5" [cols]="30"
-                    autoResize="autoresize"
+                    [cols]="30"
+                    [rows]="5"
                     [formControl]="form.controls['description']"
+                    [ngStyle]="inputsClassStyle"
                     [style.opacity]="inputsOpacity"
+                    (keyup)="autoexpand($event)"
                 >
                 </textarea>
             </div>
@@ -165,12 +177,19 @@ export class AppProductComponent implements OnInit, OnChanges, AfterViewInit {
   // Эвент для показа/скрытия полной информации по продукту
   @Output() fullInfoStateChanged: EventEmitter<number>;
 
+  private textArea: ElementRef;
+  @ViewChild('textArea') set content(content: ElementRef) {
+    this.textArea = content;
+  }
+
   // private params: Array<any>;
 
   // Свойства продукта для отображения
   // private properties: Map<string, string> = new Map<string, string>();
   // private propKeys: String[];
   // private properties: Property[];
+
+  private inputsClassStyle: any = LOCKED_INPUTS_STYLE;
 
   // Режим редактирования
   private editMode: boolean;
@@ -213,6 +232,7 @@ export class AppProductComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    console.log('Textarea', this.textArea);
     console.log('ngAfterViewInit');
   }
 
@@ -235,6 +255,7 @@ export class AppProductComponent implements OnInit, OnChanges, AfterViewInit {
     this.form.controls['title'].disable();
     this.form.controls['description'].disable();
     this.inputsOpacity = INPUT_OPACITY_BLOCKED;
+    this.inputsClassStyle = LOCKED_INPUTS_STYLE;
   }
 
   unlockControls(): void {
@@ -242,6 +263,7 @@ export class AppProductComponent implements OnInit, OnChanges, AfterViewInit {
     this.form.controls['title'].enable();
     this.form.controls['description'].enable();
     this.inputsOpacity = INPUT_OPACITY_ENABLED;
+    this.inputsClassStyle = {};
   }
 
   toggleEditMode(): void {
@@ -278,5 +300,12 @@ export class AppProductComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     this.fullInfoStateChanged.emit(this.product.id);
+  }
+
+  autoexpand(e: any): void {
+    // const element = typeof e === 'object' ? e.target : document.getElementById(e);
+    // element.style.height = 'auto';
+    // const scrollHeight = element.scrollHeight; // replace 60 by the sum of padding-top and padding-bottom
+    // element.style.height =  scrollHeight + 'px';
   }
 }

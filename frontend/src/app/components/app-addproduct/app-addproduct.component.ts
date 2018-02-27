@@ -311,6 +311,7 @@ export class AppAddproductComponent implements OnInit {
     this.form.controls['price'].setValue('');
     this.form.controls['image'].setValue('');
     this.form.controls['description'].setValue('');
+    this.images = [];
   }
 
   imageAbscenceStatus(): boolean {
