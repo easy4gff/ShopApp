@@ -117,6 +117,7 @@ function priceValidator(control: FormControl): { [s: string]: boolean } {
                 <textarea
                     #textArea
                     pInputTextarea
+                    autoResize="autoResize"
                     class="ui-g-12 form-input"
                     id="description-input"
                     value="{{product.description}}"
@@ -182,6 +183,10 @@ export class AppProductComponent implements OnInit, OnChanges, AfterViewInit {
     this.textArea = content;
   }
 
+  // private inputTextarea: ElementRef;
+  // @ViewChild('pInputTextarea', { read: }) set area(content: ElementRef) {
+  //   this.inputTextarea = content;
+  // }
   // private params: Array<any>;
 
   // Свойства продукта для отображения
@@ -226,13 +231,21 @@ export class AppProductComponent implements OnInit, OnChanges, AfterViewInit {
       IMAGE_ICON_HEIGHT,
       IMAGE_ICON_WIDTH
     );
-    console.log(this.image);
 
     console.log('ngOnInit completed');
   }
 
   ngAfterViewInit(): void {
     console.log('Textarea', this.textArea);
+    // console.log('InputTextArea:', this.inputTextarea);
+    if (this.isSelected) {
+      console.log('Height: ', this.textArea.nativeElement.height);
+      console.log('Scroll height: ', this.textArea.nativeElement.scrollHeight);
+      console.log('style:', this.textArea.nativeElement.style);
+
+      this.textArea.nativeElement.style.height = this.textArea.nativeElement.scrollHeight + 'px';
+      // this.cdref.detectChanges();
+    }
     console.log('ngAfterViewInit');
   }
 
@@ -271,7 +284,7 @@ export class AppProductComponent implements OnInit, OnChanges, AfterViewInit {
     console.log(this.editMode);
 
     if (!this.editMode) {
-      this.lockControls();
+      // this.lockControls();
 
       this.product.price = this.form.controls['price'].value;
       this.product.title = this.form.controls['title'].value;
@@ -307,5 +320,8 @@ export class AppProductComponent implements OnInit, OnChanges, AfterViewInit {
     // element.style.height = 'auto';
     // const scrollHeight = element.scrollHeight; // replace 60 by the sum of padding-top and padding-bottom
     // element.style.height =  scrollHeight + 'px';
+
+    // Убирает определение высоты элемента, чтобы не ломать автоопределение размера
+    this.textArea.nativeElement.style.height = '';
   }
 }
