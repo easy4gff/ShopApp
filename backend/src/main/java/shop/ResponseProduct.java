@@ -25,12 +25,14 @@ public class ResponseProduct {
 	}
 	
 	// Конструктор копирования
-	public ResponseProduct(ProductEntity p) {
+	public ResponseProduct(ProductEntity p, boolean getFullInfo) {
 		this.id = p.getId();
 		this.price = p.getPrice();
 		this.title = p.getTitle();
-		this.description = p.getDescription();
 		this.image = Base64Utils.encodeToString(p.getImage());
+		
+		if (getFullInfo)
+			this.description = p.getDescription();
 //		this.additionalInfo = p.getAdditionalInfo();
 	}
 

@@ -44,8 +44,8 @@ public class AppRestController {
 //        return (List<ResponseProduct>) products.stream().map(((entity) -> new ResponseProduct(entity)))
 //        		.collect(Collectors.toList()); 
         
-        return products.stream().map(((entity) -> new ResponseProduct(entity)))
-        		.collect(Collectors.toCollection(supplier)); 
+        return products.stream().map(((entity) -> new ResponseProduct(entity, false)))
+        		.collect(Collectors.toCollection(supplier));
     }
     
     // Удаление продукта с данным id
@@ -65,6 +65,7 @@ public class AppRestController {
     				input.getTitle(),
     				input.getDescription()
 		);
+    	entity.setId(input.getId());
     	//entity.setImage(Base64Utils.decodeFromString(input.getImage()));
     	try {
 			entity.setImage(Base64.getDecoder().decode(new String(input.getImage()).getBytes("UTF-8")));
@@ -76,6 +77,14 @@ public class AppRestController {
     
     	return true;
     }
+    
+    @RequestMapping(value = "/products/fullinfo", method = RequestMethod.POST)
+    public ResponseProduct getFullProductInfo(@RequestBody int id) {
+    	ProductEntity product = repository.findOne(id);
+    	ResponseProduct response = new ResponseProduct(product, true);
+    	return response;
+    }
+    
     
     // Инициализация
     @PostConstruct

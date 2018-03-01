@@ -39,7 +39,7 @@ public class ProductEntity {
 	ProductEntity(double price, String title, String description) {
 		this.price = price;
 		this.title = title;
-		//this.description = description;
+		this.description = description;
 		//this.image = new byte[2];
 	}
 	
