@@ -60,7 +60,7 @@ const LOCKED_INPUTS_STYLE = {
 
 // Проверка корректности стоимости товара
 function priceValidator(control: FormControl): { [s: string]: boolean } {
-  if (isNaN(parseFloat(control.value))) {
+  if (isNaN(+control.value)) {
     return { invalidPrice: true };
   }
   return null;
